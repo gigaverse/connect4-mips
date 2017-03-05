@@ -2,10 +2,10 @@
 #grid: .space 42
 grid: .byte 32:42 # creates an array of 42 chars and sets each one as a blank space since 32 is the decimal value for spacebar
 #grid: .byte 32, 32, 32, 32, 32 ,32 ,32 ,32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32
-borderL: .ascii "| " # used for the border on the left side
-borderR: .ascii " |" # used for the border on the right side and all the spaces in the middle
-bottom: .asciiz "___________________________" # the bottom line of the board, I have yet to find out if its the right length yet
-newline: .ascii "\n" # makes a new line
+borderL: .asciiz "|" # used for the border on the left side
+borderR: .asciiz " |" # used for the border on the right side and all the spaces in the middle
+bottom: .asciiz "______________________" # the bottom line of the board, I have yet to find out if its the right length yet
+newline: .asciiz "\n" # makes a new line
 
 
 .text
@@ -44,9 +44,9 @@ while: beq $t0, 42, exit # loops until every item in the array has been displaye
                 
        rowComplet: # is called once the row is displayed
        # displayes the right border at the end of that row
-       la $a0, borderR
-       li $v0, 4
-       syscall
+       #la $a0, borderR
+       #li $v0, 4
+       #syscall
        
        # makes a new line for the next row
        la $a0, newline
