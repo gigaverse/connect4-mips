@@ -14,11 +14,16 @@ fullC:	.asciiz "The column you are trying to add to is full. Please enter a diff
 oOfR:	.asciiz "Please enter a number betweeen 1 and 7: "
 comp:	.asciiz "After the computer's turn, the board looks like this:\n"
 start:	.asciiz "The board has been reset. A new game will be started."
+p1Win: .asciiz "\nPlayer 1 Wins! Good job Player 1!\n"
 
 .text
 
 main: #manages the game
-
+      jal DisplayBoard
+      la $a0, newline
+      li $v0, 4
+      syscall
+ 
 	la $a0, prompt
 	li $v0, 4
 	syscall #prompt user for column number
@@ -72,6 +77,11 @@ addp1:	lb $t0, p1
 	sb $t0, grid($s0)
 	
 	jal DisplayBoard #display updated board
+	
+	add $s1, $s0, $zero
+	jal HorizontalP1Check #checks if they won
+	
+	add $s1, $s0, $zero
 	
 	la $a0, newline
 	li $v0, 4
@@ -135,8 +145,12 @@ rExit:	la $a0, start
 	j main #jump back to beginning
 
 DisplayBoard: # displays the board
-add $t0, $zero, $zero # makes sure $t0 is set to 0
-while: beq $t0, 42, exit # loops until every item in the array has been displayed, loops a total of 6 times, one for each row
+   subu $sp, $sp, 4 # adds enough room on the stack for the return address
+   sw $ra, ($sp)
+   
+   add $t0, $zero, $zero # makes sure $t0 is set to 0
+   
+   while: beq $t0, 42, exit # loops until every item in the array has been displayed, loops a total of 6 times, one for each row
 
             # displays the left border 
             la $a0, borderL 
@@ -185,9 +199,214 @@ la $a0, bottom
 li $v0, 4
 syscall
 
+   lw $ra, ($sp)
+   addu $sp, $sp, 4
+   jr $ra
+   
+HorizontalP1Check:
+    subu $sp, $sp, 4
+    sw $ra, ($sp)
+    
+    add $t0, $zero, $zero
+    lb $t1, space
+    lb $t2, p2
+    jal HorizontalP1Right
+    add $t0, $zero, $zero
+    jal HorizontalP1Left
+    
+    lw $ra, ($sp)
+    addu $sp, $sp, 4
+    jr $ra
+    
+HorizontalP1Right:
+subu $sp, $sp, 4
+sw $ra, ($sp)
 
-# problems with the code right now
-# before displaying the char it dipslays a borderR and a bottom line forsome reason and then after every borderR a bottom line is displayed and I can't figure out the reason behind this
-# bottom should only be called in after the while loop exits but it is displayed many times before that for some reason
-# the byte/char is loaded and displayed the correct number of times though, but it is also cuasing other values to be displayed for some reason
-# nothing I search for online has any referance or solution to this.
+addi $t5, $zero, 7
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop1R
+
+addi $t5, $zero, 14
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop2R
+
+addi $t5, $zero, 21
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop3R
+
+addi $t5, $zero, 28
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop4R
+
+addi $t5, $zero, 35
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop5R
+
+addi $t5, $zero, 42
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop6R
+     
+    HorizLoop6R: beq $t0,3,Rexit
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, 1
+     beq, $s1, 42, noHRwin
+     addi $t0, $t0, 1
+     j HorizLoop6R
+     
+      HorizLoop5R: beq $t0,3,Rexit
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, 1
+     beq, $s1, 35, noHRwin
+     addi $t0, $t0, 1
+     j HorizLoop5R
+     
+      HorizLoop4R: beq $t0,3,Rexit
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, 1
+     beq, $s1, 28, noHRwin
+     addi $t0, $t0, 1
+     j HorizLoop4R
+     
+      HorizLoop3R: beq $t0,3,Rexit
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, 1
+     beq, $s1, 21, noHRwin
+     addi $t0, $t0, 1
+     j HorizLoop3R
+     
+      HorizLoop2R: beq $t0,3,Rexit
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, 1
+     beq, $s1, 14, noHRwin
+     addi $t0, $t0, 1
+     j HorizLoop2R
+     
+      HorizLoop1R: beq $t0,3,Rexit
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, 1
+     beq, $s1, 7, noHRwin
+     addi $t0, $t0, 1
+     j HorizLoop1R
+    
+     
+    noHRwin:
+        lw $ra, ($sp)
+        addu $sp, $sp, 4 
+         jr $ra 
+         
+    Rexit:
+        la $a0, p1Win
+        li $v0, 4
+        syscall
+        
+        li $v0, 10
+        syscall
+
+HorizontalP1Left:
+subu $sp, $sp, 4
+sw $ra, ($sp)
+
+addi $t5, $zero, 7
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop1L
+
+addi $t5, $zero, 14
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop2L
+
+addi $t5, $zero, 21
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop3L
+
+addi $t5, $zero, 28
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop4L
+
+addi $t5, $zero, 35
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop5L
+
+addi $t5, $zero, 42
+slt $t4, $s1, $t5
+beq $t4, 1, HorizLoop6L
+     
+    HorizLoop6L: beq $t0,3,Lexit # if it looped 4 times without a space that isn't their peice then p1 wins
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, -1
+     beq, $s1, 34, noHLwin # if there is no more space in that row to count then p1 didn't win
+     addi $t0, $t0, 1
+     j HorizLoop6L
+     
+      HorizLoop5L: beq $t0,3,Lexit
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, -1
+     beq, $s1, 27, noHLwin
+     addi $t0, $t0, 1
+     j HorizLoop5L
+     
+      HorizLoop4L: beq $t0,3,Lexit
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, -1
+     beq, $s1, 20, noHLwin
+     addi $t0, $t0, 1
+     j HorizLoop4L
+     
+      HorizLoop3L: beq $t0,3,Lexit
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, -1
+     beq, $s1, 13, noHLwin
+     addi $t0, $t0, 1
+     j HorizLoop3L
+     
+      HorizLoop2L: beq $t0,3,Lexit
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, -1
+     beq, $s1, 6, noHLwin
+     addi $t0, $t0, 1
+     j HorizLoop2L
+     
+      HorizLoop1L: beq $t0,3,Lexit
+     lb $t3, grid($s1)
+     beq $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
+     beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
+     addi $s1, $s1, -1
+     beq, $s1, -1, noHLwin
+     addi $t0, $t0, 1
+     j HorizLoop1L
+    
+     
+    noHLwin:
+        lw $ra, ($sp)
+        addu $sp, $sp, 4 
+        jr $ra
+          
+     Lexit:
+        la $a0, p1Win
+        li $v0, 4
+        syscall
+        
+        li $v0, 10
+        syscall
+
