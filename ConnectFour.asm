@@ -252,59 +252,60 @@ beq $t4, 1, HorizLoop5R
 addi $t5, $zero, 42
 slt $t4, $s1, $t5
 beq $t4, 1, HorizLoop6R
-     
+     #Important ######### the check for out of bounds needs to happen at the bigginging of the loop before the lb.######### important
     HorizLoop6R: beq $t0,4,Rexit
+    beq, $s1, 42, noHRwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1
      addi $s1, $s1, 1
-     beq, $s1, 42, noHRwin
      j HorizLoop6R
      
       HorizLoop5R: beq $t0,4,Rexit
-     lb $t3, grid($s1)
-     bne $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
+      beq, $s1, 35, noHRwin
+      lb $t3, grid($s1)
+      bne $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
-     addi $t0, $t0, 1
-     addi $s1, $s1, 1
-     beq, $s1, 35, noHRwin
+      addi $t0, $t0, 1
+      addi $s1, $s1, 1
+     
      j HorizLoop5R
      
       HorizLoop4R: beq $t0,4,Rexit
+      beq, $s1, 28, noHRwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1
      addi $s1, $s1, 1
-     beq, $s1, 28, noHRwin
      j HorizLoop4R
      
       HorizLoop3R: beq $t0,4,Rexit
+       beq, $s1, 21, noHRwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1
      addi $s1, $s1, 1
-     beq, $s1, 21, noHRwin
      j HorizLoop3R
      
       HorizLoop2R: beq $t0,4,Rexit
+      beq, $s1, 14, noHRwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, 1
-     beq, $s1, 14, noHRwin
      j HorizLoop2R
      
       HorizLoop1R: beq $t0,4,Rexit
+      beq, $s1, 7, noHRwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHRwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1
      addi $s1, $s1, 1
-     beq, $s1, 7, noHRwin
      j HorizLoop1R
     
      
@@ -350,57 +351,57 @@ slt $t4, $s1, $t5
 beq $t4, 1, HorizLoop6L
      
     HorizLoop6L: beq $t0,4,Lexit # if it looped 4 times without a space that isn't their peice then p1 wins
+    beq, $s1, 34, noHLwin # if there is no more space in that row to count then p1 didn't win
      lb $t3, grid($s1)
      bne $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, 34, noHLwin # if there is no more space in that row to count then p1 didn't win
      j HorizLoop6L
      
       HorizLoop5L: beq $t0,4,Lexit
+      beq, $s1, 27, noHLwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, 27, noHLwin
      j HorizLoop5L
      
       HorizLoop4L: beq $t0,4,Lexit
+      beq, $s1, 20, noHLwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, 20, noHLwin
      j HorizLoop4L
      
       HorizLoop3L: beq $t0,4,Lexit
+      beq, $s1, 13, noHLwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, 13, noHLwin
      j HorizLoop3L
      
       HorizLoop2L: beq $t0,4,Lexit
+      beq, $s1, 6, noHLwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, 6, noHLwin
      j HorizLoop2L
      
       HorizLoop1L: beq $t0,4,Lexit
+       beq, $s1, -1, noHLwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, -1, noHLwin
      j HorizLoop1L
     
      
@@ -466,57 +467,57 @@ slt $t4, $s1, $t5
 beq $t4, 1, HorizLoop6RC
      
     HorizLoop6RC: beq $t0,4,RCexit
+    beq, $s1, 42, noHRCwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHRCwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1
      addi $s1, $s1, 1
-     beq, $s1, 42, noHRCwin
      j HorizLoop6RC
      
       HorizLoop5RC: beq $t0,4,RCexit
+      beq, $s1, 35, noHRCwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHRCwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1
      addi $s1, $s1, 1
-     beq, $s1, 35, noHRCwin
      j HorizLoop5RC
      
       HorizLoop4RC: beq $t0,4,RCexit
+       beq, $s1, 28, noHRCwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHRCwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1
      addi $s1, $s1, 1
-     beq, $s1, 28, noHRCwin
      j HorizLoop4RC
      
       HorizLoop3RC: beq $t0,4,RCexit
+      beq, $s1, 21, noHRCwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHRCwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1
      addi $s1, $s1, 1
-     beq, $s1, 21, noHRCwin
      j HorizLoop3RC
      
       HorizLoop2RC: beq $t0,4,RCexit
+      beq, $s1, 14, noHRCwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHRCwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, 1
-     beq, $s1, 14, noHRCwin
      j HorizLoop2R
      
       HorizLoop1RC: beq $t0,4,RCexit
+      beq, $s1, 7, noHRCwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHRCwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHRwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1
      addi $s1, $s1, 1
-     beq, $s1, 7, noHRCwin
      j HorizLoop1RC
     
      
@@ -562,57 +563,57 @@ slt $t4, $s1, $t5
 beq $t4, 1, HorizLoop6LC
      
     HorizLoop6LC: beq $t0,4,LCexit # if it looped 4 times without a space that isn't their peice then p1 wins
+      beq, $s1, 34, noHLCwin # if there is no more space in that row to count then p1 didn't win
      lb $t3, grid($s1)
      bne $t3, $t2, noHLCwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, 34, noHLCwin # if there is no more space in that row to count then p1 didn't win
      j HorizLoop6LC
      
       HorizLoop5LC: beq $t0,4,LCexit
+      beq, $s1, 27, noHLCwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHLCwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, 27, noHLCwin
      j HorizLoop5LC
      
       HorizLoop4LC: beq $t0,4,LCexit
+      beq, $s1, 20, noHLCwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHLCwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, 20, noHLCwin
      j HorizLoop4LC
      
       HorizLoop3LC: beq $t0,4,LCexit
+      beq, $s1, 13, noHLCwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHLCwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, 13, noHLCwin
      j HorizLoop3LC
      
       HorizLoop2LC: beq $t0,4,LCexit
+      beq, $s1, 6, noHLCwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHLCwin # if the space is player 2's peice then p1 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, 6, noHLCwin
      j HorizLoop2LC
      
       HorizLoop1LC: beq $t0,4,LCexit
+      beq, $s1, -1, noHLCwin
      lb $t3, grid($s1)
      bne $t3, $t2, noHLCwin # if the space is player 1's peice then p2 didn't win
      #beq $t3, $t1, noHLwin # if the space is a blank space then p2 didn't win
      addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
      addi $s1, $s1, -1
-     beq, $s1, -1, noHLCwin
      j HorizLoop1LC
     
      
