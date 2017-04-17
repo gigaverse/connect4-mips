@@ -81,7 +81,7 @@ addp1:	lb $t0, p1
 	
 	#add $s1, $s0, $zero
 	lb $t0, p1
-	jal HorizontalP1Check #checks if they won
+	jal WinCheck #checks if they won
 	
 	add $s1, $s0, $zero
 	
@@ -104,7 +104,7 @@ addp2:	lb $t0, p2
 	jal DisplayBoard
 	
 	lb $t0, p2
-	jal HorizontalP1Check
+	jal WinCheck
 	
 	la $a0, newline
 	li $v0, 4
@@ -208,9 +208,9 @@ syscall
    addu $sp, $sp, 4
    jr $ra
    
-#-----------------------------------------------------------------------------------------------------------------# Player 1 win checks
+#------------------------#win checks for both players
   
-HorizontalP1Check:
+WinCheck:
     subu $sp, $sp, 4
     sw $ra, ($sp)
     
@@ -218,16 +218,16 @@ HorizontalP1Check:
     add $t0, $zero, $zero
     #lb $t2, p1
     add $s1, $s0, $zero
-    jal HorizontalP1Right
+    jal HorizontalRight
     addi $t0, $t0, -1
     add $s1, $s0, $zero
-    jal HorizontalP1Left
+    jal HorizontalLeft
     
     lw $ra, ($sp)
     addu $sp, $sp, 4
     jr $ra
     
-HorizontalP1Right:
+HorizontalRight:
 subu $sp, $sp, 4
 sw $ra, ($sp)
 
@@ -235,38 +235,29 @@ addi $t6, $zero, 1 #CHECKING HORIZONTALLY FROM THE LEFT (next piece)
 
 addi $t5, $zero, 7
 slt $t4, $s1, $t5
-beq $t4, 1, HorizLoopR
+beq $t4, 1, CheckLoop
 
 addi $t5, $zero, 14
 slt $t4, $s1, $t5
-beq $t4, 1, HorizLoopR
+beq $t4, 1, CheckLoop
 
 addi $t5, $zero, 21
 slt $t4, $s1, $t5
-beq $t4, 1, HorizLoopR
+beq $t4, 1, CheckLoop
 
 addi $t5, $zero, 28
 slt $t4, $s1, $t5
-beq $t4, 1, HorizLoopR
+beq $t4, 1, CheckLoop
 
 addi $t5, $zero, 35
 slt $t4, $s1, $t5
-beq $t4, 1, HorizLoopR
+beq $t4, 1, CheckLoop
 
 addi $t5, $zero, 42
 slt $t4, $s1, $t5
-beq $t4, 1, HorizLoopR
-    
-    #Important ######### the check for out of bounds needs to happen at the bigginging of the loop before the lb.######### important
-    HorizLoopR: beq $t0,4,Lexit
-    beq, $s1, $t5, noHLwin
-    lb $t3, grid($s1)
-    bne $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
-    addi $t0, $t0, 1
-    add $s1, $s1, $t6
-    j HorizLoopR
+beq $t4, 1, CheckLoop
 
-HorizontalP1Left:
+HorizontalLeft:
 subu $sp, $sp, 4
 sw $ra, ($sp)
 
@@ -275,50 +266,51 @@ addi $t6, $zero, -1 #CHECKING HORIZONTALLY FROM THE LEFT (next piece)
 addi $t5, $zero, 7
 slt $t4, $s1, $t5
 subi $t5, $zero, 8
-beq $t4, 1, HorizLoopL
+beq $t4, 1, CheckLoop
 
 addi $t5, $zero, 14
 slt $t4, $s1, $t5
 subi $t5, $zero, 8
-beq $t4, 1, HorizLoopL
+beq $t4, 1, CheckLoop
 
 addi $t5, $zero, 21
 slt $t4, $s1, $t5
 subi $t5, $zero, 8
-beq $t4, 1, HorizLoopL
+beq $t4, 1, CheckLoop
 
 addi $t5, $zero, 28
 slt $t4, $s1, $t5
 subi $t5, $zero, 8
-beq $t4, 1, HorizLoopL
+beq $t4, 1, CheckLoop
 
 addi $t5, $zero, 35
 slt $t4, $s1, $t5
 subi $t5, $zero, 8
-beq $t4, 1, HorizLoopL
+beq $t4, 1, CheckLoop
 
 addi $t5, $zero, 42
 slt $t4, $s1, $t5
 subi $t5, $zero, 8
-beq $t4, 1, HorizLoopL
+beq $t4, 1, CheckLoop
+
+    #Important ######### the check for out of bounds needs to happen at the bigginging of the loop before the lb.######### important
+    CheckLoop: beq $t0,4,WinExit
+    beq, $s1, $t5, noHLwin
+    lb $t3, grid($s1)
+    bne $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
+    addi $t0, $t0, 1
+    add $s1, $s1, $t6
+    j CheckLoop
      
-    HorizLoopL: beq $t0,4,Lexit # if it looped 4 times without a space that isn't their peice then p1 wins
-    beq, $s1, $t5, noHLwin # if there is no more space in that row to count then p1 didn't win
-     lb $t3, grid($s1)
-     bne $t3, $t2, noHLwin # if the space is player 2's peice then p1 didn't win
-     #beq $t3, $t1, noHLwin # if the space is a blank space then p1 didn't win
-     addi $t0, $t0, 1 # adds one to the counter of player peices next to each other
-     add $s1, $s1, $t6
-     j HorizLoopL
 
     noHLwin:
         lw $ra, ($sp)
         addu $sp, $sp, 4 
         jr $ra
           
-     Lexit:
+     WinExit:
      	lb $t7, p2
-     	beq $t7, $t2, LCexit
+     	beq $t7, $t2, CWinExit
         la $a0, p1Win
         li $v0, 4
         syscall
@@ -326,7 +318,7 @@ beq $t4, 1, HorizLoopL
         li $v0, 10
         syscall
  
-     LCexit:
+     CWinExit:
         la $a0, CompWin
         li $v0, 4
         syscall
