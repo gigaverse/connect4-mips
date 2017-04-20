@@ -49,7 +49,7 @@ Loop:	add $s0, $v0, $zero
 loop:	lb $t1, grid($s0)
 	beq $t0, $t1, addp1 #check if soemthing's there (add a piece if something isn't)
 	addi $s0, $s0, -7 #move up a row
-	li $t2, 0
+	li $t2, -1
 	#breaks the loop by branching if the column is full
 	slt $t2, $t2, $s0
 	beq $t2, $zero, colFull
