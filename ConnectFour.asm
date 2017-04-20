@@ -223,6 +223,14 @@ WinCheck:
     add $s1, $s0, $zero
     jal HorizontalLeft
     
+    add $s1, $s0, $zero
+    add $t0, $zero, $zero
+    #jal VerticalUp
+    
+    #addi $t0, $t0, -1
+    add $s1, $s0, $zero
+    jal VerticalDown
+    
     lw $ra, ($sp)
     addu $sp, $sp, 4
     jr $ra
@@ -293,6 +301,16 @@ slt $t4, $s1, $t5
 subi $t5, $zero, 8
 beq $t4, 1, CheckLoop
 
+
+
+VerticalDown:        
+subu $sp, $sp, 4
+sw $ra, ($sp)
+
+li $t5, 42
+addi $t6, $zero, 7
+j CheckLoopVertD
+
     #Important ######### the check for out of bounds needs to happen at the bigginging of the loop before the lb.######### important
     CheckLoop: beq $t0,4,WinExit
     beq, $s1, $t5, noHLwin
@@ -302,8 +320,25 @@ beq $t4, 1, CheckLoop
     add $s1, $s1, $t6
     j CheckLoop
      
-
+    
+    CheckLoopVertD: beq $t0, 4, WinExit
+    slt $t4, $s1, $t5
+    beq $t4, $zero, noVwin
+    lb $t3, grid($s1)
+    bne $t3, $t2, noVwin
+    addi $t0, $t0, 1
+    add $s1, $s1, $t6
+    j CheckLoopVertD
+    
     noHLwin:
+        lw $ra, ($sp)
+        addu $sp, $sp, 4 
+        jr $ra
+        
+        noVwin:
+        la $a0, CompWin
+        li $v0, 4
+        syscall
         lw $ra, ($sp)
         addu $sp, $sp, 4 
         jr $ra
