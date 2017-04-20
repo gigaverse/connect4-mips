@@ -225,9 +225,7 @@ WinCheck:
     
     add $s1, $s0, $zero
     add $t0, $zero, $zero
-    #jal VerticalUp
     
-    #addi $t0, $t0, -1
     add $s1, $s0, $zero
     jal VerticalDown
     
@@ -336,9 +334,6 @@ j CheckLoopVertD
         jr $ra
         
         noVwin:
-        la $a0, CompWin
-        li $v0, 4
-        syscall
         lw $ra, ($sp)
         addu $sp, $sp, 4 
         jr $ra
