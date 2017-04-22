@@ -229,6 +229,22 @@ WinCheck:
     add $s1, $s0, $zero
     jal VerticalDown
     
+    add $t0, $zero, $zero
+    add $s1, $s0, $zero
+    jal DiagDownTop
+    
+    addi $t0, $t0, -1
+    add $s1, $s0, $zero
+    jal DiagDownBot
+    
+    add $t0, $zero, $zero
+    add $s1, $s0, $zero
+    jal DiagUpTop
+    
+    addi $t0, $t0, -1
+    add $s1, $s0, $zero
+    jal DiagUpBot
+    
     lw $ra, ($sp)
     addu $sp, $sp, 4
     jr $ra
@@ -309,6 +325,38 @@ li $t5, 42
 addi $t6, $zero, 7
 j CheckLoopVertD
 
+DiagDownTop:        
+subu $sp, $sp, 4
+sw $ra, ($sp)
+
+li $t5, 42
+addi $t6, $zero, 8
+j CheckLoopVertD
+
+DiagDownBot:        
+subu $sp, $sp, 4
+sw $ra, ($sp)
+
+li $t5, 0
+addi $t6, $zero, -8
+j CheckLoopVertU
+
+DiagUpTop:        
+subu $sp, $sp, 4
+sw $ra, ($sp)
+
+li $t5, 42
+addi $t6, $zero, 6
+j CheckLoopVertD
+
+DiagUpBot:        
+subu $sp, $sp, 4
+sw $ra, ($sp)
+
+li $t5, 0
+addi $t6, $zero, -6
+j CheckLoopVertU
+
     #Important ######### the check for out of bounds needs to happen at the bigginging of the loop before the lb.######### important
     CheckLoop: beq $t0,4,WinExit
     beq, $s1, $t5, noHLwin
@@ -321,6 +369,15 @@ j CheckLoopVertD
     
     CheckLoopVertD: beq $t0, 4, WinExit
     slt $t4, $s1, $t5
+    beq $t4, $zero, noVwin
+    lb $t3, grid($s1)
+    bne $t3, $t2, noVwin
+    addi $t0, $t0, 1
+    add $s1, $s1, $t6
+    j CheckLoopVertD
+    
+    CheckLoopVertU: beq $t0, 4, WinExit
+    slt $t4, $t5, $s1
     beq $t4, $zero, noVwin
     lb $t3, grid($s1)
     bne $t3, $t2, noVwin
