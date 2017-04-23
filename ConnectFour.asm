@@ -16,6 +16,7 @@ comp:	.asciiz "After the computer's turn, the board looks like this:\n"
 start:	.asciiz "The board has been reset. A new game will be started."
 p1Win: .asciiz "\nPlayer 1 Wins! Good job Player 1!\n"
 CompWin: .asciiz "\n Computer wins. You lose!\n"
+newGame: .asciiz "Enter 1 if you would like to play again and 0 if you would like to quit: "
 
 .text
 
@@ -402,6 +403,17 @@ j CheckLoopVertU
         li $v0, 4
         syscall
         
+        #prompt the user to start a new game
+        la $a0, newGame
+        li $v0, 4
+        syscall
+        li $v0, 5
+        syscall
+        
+        #reset the board if the input isn't 0
+        bne $v0, $zero, resetBoard
+        
+        #terminate the game
         li $v0, 10
         syscall
  
@@ -410,5 +422,16 @@ j CheckLoopVertU
         li $v0, 4
         syscall
         
+        #prompt the user to start a new game
+        la $a0, newGame
+        li $v0, 4
+        syscall
+        li $v0, 5
+        syscall
+        
+        #reset the board if the input isn't zero
+        bne $v0, $zero, resetBoard
+        
+        #terminate the game
         li $v0, 10
         syscall
