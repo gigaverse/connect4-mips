@@ -384,7 +384,7 @@ j CheckLoopVertU
     bne $t3, $t2, noVwin
     addi $t0, $t0, 1
     add $s1, $s1, $t6
-    j CheckLoopVertD
+    j CheckLoopVertU
     
     noHLwin:
         lw $ra, ($sp)
